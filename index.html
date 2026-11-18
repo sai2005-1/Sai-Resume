@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sai Bhargav Yelamanchi — Robotics Software Engineer</title>
+<meta name="description" content="Sai Bhargav Yelamanchi — robotics software engineer and computer science student at UNC Charlotte. Autonomous control, drivetrain logic and real-time sensor feedback." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===== background layers ===== -->
+<div class="bg-base" aria-hidden="true"></div>
+<div class="bg-aurora" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+</div>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<!-- ===== chrome ===== -->
+<div class="scroll-progress" aria-hidden="true"><span id="progressBar"></span></div>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Home">
+    <span class="brand-mark">SBY</span>
+    <span class="brand-name">Sai Bhargav</span>
+  </a>
+  <nav class="nav-links" aria-label="Sections">
+    <a href="#about"><i>01</i>About</a>
+    <a href="#skills"><i>02</i>Skills</a>
+    <a href="#experience"><i>03</i>Experience</a>
+    <a href="#projects"><i>04</i>Projects</a>
+    <a href="#education"><i>05</i>Education</a>
+  </nav>
+  <a class="btn btn-ghost nav-cta" href="#contact">Contact</a>
+</header>
+
+<main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="hero">
+    <canvas id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow" data-reveal>
+          <span class="pulse-dot"></span> Robotics Software Engineer · Charlotte, NC
+        </p>
+
+        <h1 class="hero-title">
+          <span class="line split" data-split>SAI BHARGAV</span>
+          <span class="line accent split" data-split>YELAMANCHI</span>
+        </h1>
+
+        <p class="hero-role" data-reveal style="--d:220ms">
+          <span class="mono">&gt;</span>
+          <span id="roleType" class="type-target" data-words='["Autonomous control systems","Drivetrain & sensor logic","C++ for competitive robots","AI, Robotics & Gaming"]'></span>
+          <span class="caret" aria-hidden="true"></span>
+        </p>
+
+        <p class="hero-desc" data-reveal style="--d:320ms">
+          I write the code that makes machines move — autonomous routines, modular drivetrain
+          logic and real-time sensor feedback for competitive robotics. CS student at
+          UNC Charlotte, concentrating in AI, Robotics &amp; Gaming.
+        </p>
+
+        <div class="hero-actions" data-reveal style="--d:420ms">
+          <a class="btn btn-solid magnetic" href="#experience">
+            <span>View experience</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn btn-outline magnetic" href="#contact">Get in touch</a>
+        </div>
+
+        <div class="hero-meta" data-reveal style="--d:520ms">
+          <span class="chip"><span class="pulse-dot small"></span> Gold Rush Robotics (VEX U)</span>
+          <span class="chip">Expected B.S. 2028</span>
+          <span class="chip">Open to internships</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-reveal="scale" style="--d:260ms">
+        <div class="orb-wrap" data-parallax="0.05">
+          <div class="orb" aria-hidden="true">
+            <span class="ring ring-a"></span>
+            <span class="ring ring-b"></span>
+            <span class="ring ring-c"></span>
+            <span class="orb-sweep"></span>
+          </div>
+
+          <div class="bot" id="bot" aria-hidden="true">
+            <svg class="bot-svg" viewBox="0 0 260 330">
+              <defs>
+                <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#1d2740" />
+                  <stop offset="0.55" stop-color="#0f1522" />
+                  <stop offset="1" stop-color="#070a12" />
+                </linearGradient>
+                <linearGradient id="visorGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#3ef2ff" />
+                  <stop offset="1" stop-color="#7ee7ff" />
+                </linearGradient>
+                <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#3ef2ff" />
+                  <stop offset="1" stop-color="#8b5cf6" />
+                </linearGradient>
+                <radialGradient id="coreGrad">
+                  <stop offset="0" stop-color="#e2feff" />
+                  <stop offset="0.45" stop-color="#3ef2ff" />
+                  <stop offset="1" stop-color="#8b5cf6" />
+                </radialGradient>
+                <filter id="glowSoft" x="-70%" y="-70%" width="240%" height="240%">
+                  <feGaussianBlur stdDeviation="7" />
+                </filter>
+              </defs>
+
+              <ellipse class="bot-shadow" cx="130" cy="316" rx="74" ry="11" fill="#3ef2ff" opacity="0.2" filter="url(#glowSoft)" />
+
+              <g class="bot-antenna">
+                <path d="M130 52 V26" stroke="url(#edgeGrad)" stroke-width="2.6" stroke-linecap="round" />
+                <circle class="beacon-halo" cx="130" cy="18" r="13" fill="#ff4bb0" opacity="0.28" filter="url(#glowSoft)" />
+                <circle class="beacon" cx="130" cy="18" r="6" fill="#ff4bb0" />
+              </g>
+
+              <g class="bot-head">
+                <rect x="74" y="48" width="112" height="88" rx="30" fill="url(#metal)" stroke="rgba(62,242,255,0.45)" stroke-width="1.6" />
+                <rect x="86" y="66" width="88" height="46" rx="23" fill="#04070e" stroke="rgba(62,242,255,0.3)" />
+                <g class="bot-face">
+                  <rect class="eye" x="103" y="80" width="14" height="17" rx="7" fill="url(#visorGrad)" />
+                  <rect class="eye" x="143" y="80" width="14" height="17" rx="7" fill="url(#visorGrad)" />
+                  <rect class="visor-scan" x="90" y="78" width="80" height="2.5" rx="1.2" fill="#d8fbff" opacity="0.5" />
+                </g>
+                <rect x="60" y="74" width="12" height="28" rx="6" fill="#101a2a" stroke="rgba(62,242,255,0.3)" />
+                <rect x="188" y="74" width="12" height="28" rx="6" fill="#101a2a" stroke="rgba(62,242,255,0.3)" />
+              </g>
+
+              <rect x="115" y="136" width="30" height="12" rx="5" fill="#0d1522" stroke="rgba(62,242,255,0.22)" />
+
+              <g class="bot-torso">
+                <rect x="78" y="146" width="104" height="96" rx="26" fill="url(#metal)" stroke="rgba(62,242,255,0.4)" stroke-width="1.6" />
+                <circle class="core-halo" cx="130" cy="186" r="34" fill="#3ef2ff" opacity="0.16" filter="url(#glowSoft)" />
+                <circle class="core-ring" cx="130" cy="186" r="26" fill="none" stroke="rgba(62,242,255,0.4)" stroke-dasharray="4 7" />
+                <circle class="core" cx="130" cy="186" r="14" fill="url(#coreGrad)" />
+                <rect x="104" y="218" width="52" height="5" rx="2.5" fill="rgba(62,242,255,0.22)" />
+                <text class="bot-label" x="130" y="236" text-anchor="middle">SBY</text>
+              </g>
+
+              <g class="arm arm-left">
+                <circle cx="78" cy="164" r="12" fill="#111a29" stroke="rgba(62,242,255,0.42)" />
+                <rect x="54" y="166" width="14" height="50" rx="7" fill="url(#metal)" stroke="rgba(62,242,255,0.3)" />
+                <rect x="49" y="212" width="24" height="15" rx="7" fill="#0f1826" stroke="rgba(139,92,246,0.55)" />
+              </g>
+
+              <g class="arm arm-right">
+                <circle cx="182" cy="164" r="12" fill="#111a29" stroke="rgba(62,242,255,0.42)" />
+                <rect x="192" y="166" width="14" height="50" rx="7" fill="url(#metal)" stroke="rgba(62,242,255,0.3)" />
+                <rect x="187" y="212" width="24" height="15" rx="7" fill="#0f1826" stroke="rgba(139,92,246,0.55)" />
+              </g>
+
+              <g class="bot-base">
+                <rect x="86" y="244" width="88" height="12" rx="6" fill="#0c141f" stroke="rgba(62,242,255,0.22)" />
+                <g>
+                  <rect x="68" y="256" width="46" height="38" rx="19" fill="#0a111b" stroke="rgba(62,242,255,0.38)" />
+                  <circle class="wheel" cx="91" cy="275" r="11" fill="none" stroke="#3ef2ff" stroke-width="2.5" stroke-dasharray="4 5" />
+                  <circle cx="91" cy="275" r="3.5" fill="#3ef2ff" />
+                </g>
+                <g>
+                  <rect x="146" y="256" width="46" height="38" rx="19" fill="#0a111b" stroke="rgba(62,242,255,0.38)" />
+                  <circle class="wheel" cx="169" cy="275" r="11" fill="none" stroke="#3ef2ff" stroke-width="2.5" stroke-dasharray="4 5" />
+                  <circle cx="169" cy="275" r="3.5" fill="#3ef2ff" />
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="holo" aria-hidden="true">
+            <div class="holo-head"><span class="mono">AUTON_BUILD</span><span class="holo-dot"></span></div>
+            <div class="holo-rows">
+              <i style="--w:82%"></i>
+              <i style="--w:58%"></i>
+              <i style="--w:94%"></i>
+              <i style="--w:44%"></i>
+            </div>
+            <div class="holo-foot mono">SENSORS · SYNCED</div>
+          </div>
+
+          <span class="glyph g1" aria-hidden="true"></span>
+          <span class="glyph g2" aria-hidden="true"></span>
+          <span class="glyph g3" aria-hidden="true"></span>
+
+          <div class="hud hud-tl mono">SYS / ONLINE</div>
+          <div class="hud hud-br mono">AUTON / READY</div>
+          <div class="hud-line" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <a class="scroll-cue" href="#about" aria-label="Scroll to about">
+      <span class="mono">SCROLL</span>
+      <span class="cue-track"><span class="cue-fill"></span></span>
+    </a>
+  </section>
+
+  <!-- ================= TICKER ================= -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack">
+      <span>C++</span><span>JAVA</span><span>PYTHON</span><span>RISC-V ASM</span><span>SPRING BOOT</span><span>MONGODB</span><span>WPILIB</span><span>VEXCODE</span><span>AUTONOMOUS CONTROL</span><span>SENSOR INTEGRATION</span><span>GIT</span><span>POSTMAN</span>
+    </div>
+  </div>
+
+  <!-- ================= ABOUT ================= -->
+  <section class="section" id="about">
+    <svg class="circuit" aria-hidden="true" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid slice">
+      <g stroke="rgba(62,242,255,0.35)" fill="none" stroke-width="1">
+        <path class="trace" d="M-20 96 H150 L196 50 H392 L436 96 H720" />
+        <path class="trace" d="M-20 210 H96 L140 254 H300 L344 210 H610 L654 254 H920" />
+        <path class="trace" d="M-20 420 H180 L226 464 H430 L474 420 H700 L744 464 H920" />
+        <path class="trace" d="M-20 540 H120 L164 496 H360 L404 540 H660" />
+      </g>
+      <g class="nodes" fill="#3ef2ff">
+        <circle cx="196" cy="50" r="3" /><circle cx="436" cy="96" r="3" />
+        <circle cx="140" cy="254" r="3" /><circle cx="654" cy="254" r="3" />
+        <circle cx="226" cy="464" r="3" /><circle cx="474" cy="420" r="3" />
+        <circle cx="164" cy="496" r="3" /><circle cx="660" cy="540" r="3" />
+      </g>
+    </svg>
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="sec-label mono" data-reveal>01 / ABOUT</p>
+        <h2 class="sec-title split" data-split data-reveal-ignore>Engineer with a<br /><span class="grad-text">pit-crew mentality.</span></h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p data-reveal>
+            I'm a Computer Science student at the University of North Carolina at Charlotte,
+            concentrating in <strong>AI, Robotics and Gaming</strong>. Most of what I love about
+            software lives at the point where code meets metal.
+          </p>
+          <p data-reveal style="--d:120ms">
+            On a competition team, a wrong motor sign or an unclamped sensor limit costs a match.
+            So I build modular subsystems, test them until they behave, and calibrate against real
+            hardware — then debug in the pit when something still goes sideways.
+          </p>
+          <p data-reveal style="--d:220ms">
+            Alongside robotics, I've shipped backend services in Java and MongoDB for a
+            volunteer-records platform, validating every request cycle end to end.
+          </p>
+          <a class="text-link" href="#contact" data-reveal style="--d:300ms">Let's work together <span>→</span></a>
+        </div>
+
+        <div class="stats">
+          <div class="stat card-tilt" data-reveal style="--d:80ms">
+            <span class="stat-num mono" data-count="2028">0</span>
+            <span class="stat-label">Expected graduation</span>
+          </div>
+          <div class="stat card-tilt" data-reveal style="--d:160ms">
+            <span class="stat-num mono" data-count="5" data-suffix="+">0</span>
+            <span class="stat-label">Languages written</span>
+          </div>
+          <div class="stat card-tilt" data-reveal style="--d:240ms">
+            <span class="stat-num mono" data-count="2">0</span>
+            <span class="stat-label">Competitive robotics programs</span>
+          </div>
+          <div class="stat card-tilt" data-reveal style="--d:320ms">
+            <span class="stat-num mono" data-count="2">0</span>
+            <span class="stat-label">Industry certifications</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="systems" aria-hidden="true">
+        <div class="sys-card">
+          <span class="sys-label mono">RADAR</span>
+          <svg class="radar-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(62,242,255,0.18)" />
+            <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(62,242,255,0.12)" />
+            <circle cx="50" cy="50" r="14" fill="none" stroke="rgba(62,242,255,0.1)" />
+            <path d="M50 50 L50 4" stroke="#3ef2ff" stroke-width="1.8" class="radar-needle" />
+            <circle class="blip" cx="68" cy="36" r="2.6" fill="#ff4bb0" />
+            <circle class="blip b2" cx="34" cy="62" r="2.2" fill="#b6ff5c" />
+          </svg>
+        </div>
+
+        <div class="sys-card">
+          <span class="sys-label mono">TELEMETRY</span>
+          <div class="bars">
+            <i style="--h:32%;--dl:0s"></i><i style="--h:58%;--dl:.15s"></i><i style="--h:44%;--dl:.05s"></i>
+            <i style="--h:76%;--dl:.3s"></i><i style="--h:50%;--dl:.1s"></i><i style="--h:88%;--dl:.22s"></i>
+            <i style="--h:38%;--dl:.4s"></i><i style="--h:66%;--dl:.08s"></i><i style="--h:80%;--dl:.26s"></i>
+            <i style="--h:46%;--dl:.35s"></i><i style="--h:94%;--dl:.12s"></i><i style="--h:56%;--dl:.2s"></i>
+            <i style="--h:72%;--dl:.02s"></i><i style="--h:40%;--dl:.32s"></i><i style="--h:62%;--dl:.18s"></i>
+            <i style="--h:84%;--dl:.28s"></i><i style="--h:48%;--dl:.06s"></i><i style="--h:70%;--dl:.24s"></i>
+          </div>
+          <span class="sys-meta mono">MOTOR OUTPUT · LIVE</span>
+        </div>
+
+        <div class="sys-card">
+          <span class="sys-label mono">SERVO</span>
+          <svg viewBox="0 0 120 78">
+            <defs>
+              <linearGradient id="servoGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#3ef2ff" />
+                <stop offset="1" stop-color="#8b5cf6" />
+              </linearGradient>
+            </defs>
+            <path d="M14 66 A46 46 0 0 1 106 66" fill="none" stroke="rgba(122,145,200,0.22)" stroke-width="6" stroke-linecap="round" />
+            <path d="M14 66 A46 46 0 0 1 106 66" fill="none" stroke="url(#servoGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="145" stroke-dashoffset="58" />
+            <g class="needle"><line x1="60" y1="66" x2="60" y2="26" stroke="#3ef2ff" stroke-width="2" stroke-linecap="round" /></g>
+            <circle cx="60" cy="66" r="4.5" fill="#3ef2ff" />
+          </svg>
+          <span class="sys-meta mono">ARM ANGLE · 42°</span>
+        </div>
+
+        <div class="sys-log mono">
+          <span>&gt; AUTON PATH LOADED</span>
+          <span>&gt; SENSOR BUS OK</span>
+          <span>&gt; MOTOR GROUPS SYNCED</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SKILLS ================= -->
+  <section class="section" id="skills" data-mark="SYSTEMS">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="sec-label mono" data-reveal>02 / SKILLS</p>
+        <h2 class="sec-title split" data-split>Tools I actually<br /><span class="grad-text">ship with.</span></h2>
+      </div>
+
+      <div class="skill-grid">
+        <article class="skill-card" data-reveal style="--d:0ms">
+          <div class="skill-top"><span class="mono">A</span><h3>Languages</h3></div>
+          <ul class="pills">
+            <li>C++</li><li>Java</li><li>Python</li><li>RISC-V Assembly</li><li>HTML</li><li>CSS</li>
+          </ul>
+        </article>
+        <article class="skill-card" data-reveal style="--d:100ms">
+          <div class="skill-top"><span class="mono">B</span><h3>Frameworks &amp; Data</h3></div>
+          <ul class="pills">
+            <li>Spring Boot</li><li>MongoDB</li><li>REST APIs</li><li>Postman</li>
+          </ul>
+        </article>
+        <article class="skill-card" data-reveal style="--d:200ms">
+          <div class="skill-top"><span class="mono">C</span><h3>Robotics &amp; Hardware</h3></div>
+          <ul class="pills">
+            <li>WPILib</li><li>VEXcode C++</li><li>Autonomous Control Logic</li><li>Sensor Integration</li><li>Drivetrain Controls</li>
+          </ul>
+        </article>
+        <article class="skill-card" data-reveal style="--d:300ms">
+          <div class="skill-top"><span class="mono">D</span><h3>Tools &amp; Creative</h3></div>
+          <ul class="pills">
+            <li>Git</li><li>GitHub</li><li>VS Code</li><li>Eclipse</li><li>RARS</li><li>Photoshop</li><li>Premiere Pro</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <div class="rover-lane" aria-hidden="true">
+    <span class="rover">
+      <svg viewBox="0 0 140 72">
+        <defs>
+          <linearGradient id="roverGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1b2438" />
+            <stop offset="1" stop-color="#080c14" />
+          </linearGradient>
+        </defs>
+        <g class="rover-body">
+          <rect x="24" y="22" width="92" height="24" rx="11" fill="url(#roverGrad)" stroke="rgba(62,242,255,0.5)" />
+          <rect x="40" y="10" width="34" height="14" rx="7" fill="#0c1420" stroke="rgba(139,92,246,0.6)" />
+          <line x1="52" y1="10" x2="52" y2="2" stroke="#8b5cf6" stroke-width="1.6" />
+          <circle class="rover-beacon" cx="52" cy="2" r="3" fill="#ff4bb0" />
+          <circle class="rover-eye" cx="104" cy="34" r="4" fill="#3ef2ff" />
+          <rect x="30" y="44" width="80" height="3" rx="1.5" fill="rgba(62,242,255,0.18)" />
+        </g>
+        <circle class="rover-wheel" cx="48" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
+        <circle class="rover-wheel" cx="94" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
+      </svg>
+    </span>
+  </div>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <section class="section" id="experience" data-mark="FIELD">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="sec-label mono" data-reveal>03 / EXPERIENCE</p>
+        <h2 class="sec-title split" data-split>Where the code<br /><span class="grad-text">hit the field.</span></h2>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <span class="timeline-rail" aria-hidden="true"><span class="timeline-fill" id="timelineFill"></span></span>
+
+        <article class="tl-item" data-reveal>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card">
+            <div class="tl-meta">
+              <span class="tl-date mono">Sep 2026 — Present</span>
+              <span class="tl-place mono">Charlotte, NC</span>
+            </div>
+            <h3>Robotics Software Engineer <span>· Gold Rush Robotics (VEX U)</span></h3>
+            <ul class="tl-list">
+              <li>Write and test autonomous routines and driver-assist controls in C++ for competitive collegiate VEX U robots.</li>
+              <li>Build modular drivetrain logic and motor groups with runtime toggling between tank drive and arcade drive.</li>
+              <li>Integrate real-time motor and sensor feedback to calibrate robot position, turn angles and match precision.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="tl-item" data-reveal>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card">
+            <div class="tl-meta">
+              <span class="tl-date mono">Sep 2024 — Jun 2025</span>
+              <span class="tl-place mono">Remote</span>
+            </div>
+            <h3>Software Engineer Intern <span>· Community Dreams Foundation</span></h3>
+            <ul class="tl-list">
+              <li>Built core backend services for the DreamStream platform to store and manage volunteer records.</li>
+              <li>Implemented database access logic and object schemas using Java and MongoDB.</li>
+              <li>Validated and debugged REST API request and response cycles using Postman.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="tl-item" data-reveal>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card">
+            <div class="tl-meta">
+              <span class="tl-date mono">2023 — 2024</span>
+              <span class="tl-place mono">Marlton, NJ</span>
+            </div>
+            <h3>Software Developer <span>· FRC Team 2722, Charge Robotics</span></h3>
+            <ul class="tl-list">
+              <li>Wrote subsystem code for motorized arm articulation, intake rollers and multi-angle shooter targeting.</li>
+              <li>Calibrated motor outputs and sensor limits during practice sessions and live regional competition matches.</li>
+              <li>Collaborated with the mechanical build team to diagnose electrical and control bugs in the competition pit.</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS ================= -->
+  <section class="section" id="projects" data-mark="BUILD">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="sec-label mono" data-reveal>04 / PROJECTS</p>
+        <h2 class="sec-title split" data-split>Systems built<br /><span class="grad-text">under pressure.</span></h2>
+      </div>
+
+      <div class="proj-grid">
+        <article class="proj-card tilt" data-reveal style="--d:0ms">
+          <div class="proj-glow" aria-hidden="true"></div>
+          <div class="proj-head">
+            <span class="proj-num mono">P.01</span>
+            <span class="proj-badge mono">FIRST ROBOTICS · FRC 2722</span>
+          </div>
+          <h3>Crescendo Robot Control System</h3>
+          <p class="proj-sub">Marlton, NJ · 2023 — 2024</p>
+          <ul class="tl-list">
+            <li>Subsystem code for motorized arm articulation, intake rollers and multi-angle shooter targeting.</li>
+            <li>Calibrated motor outputs and sensor limits across practice runs and live regional matches.</li>
+            <li>Diagnosed electrical and control faults in the pit alongside the mechanical build team.</li>
+          </ul>
+          <ul class="pills tight">
+            <li>WPILib</li><li>Java</li><li>Sensor Calibration</li><li>PID Control</li>
+          </ul>
+        </article>
+
+        <article class="proj-card tilt" data-reveal style="--d:120ms">
+          <div class="proj-glow" aria-hidden="true"></div>
+          <div class="proj-head">
+            <span class="proj-num mono">P.02</span>
+            <span class="proj-badge mono">DREAMSTREAM PLATFORM</span>
+          </div>
+          <h3>Volunteer Records Backend</h3>
+          <p class="proj-sub">Community Dreams Foundation · 2024 — 2025</p>
+          <ul class="tl-list">
+            <li>Core backend services storing and managing volunteer records for the DreamStream platform.</li>
+            <li>Database access logic and object schemas modelled in Java with MongoDB.</li>
+            <li>REST request/response cycles validated and debugged end to end in Postman.</li>
+          </ul>
+          <ul class="pills tight">
+            <li>Spring Boot</li><li>Java</li><li>MongoDB</li><li>REST</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EDUCATION ================= -->
+  <section class="section" id="education">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="sec-label mono" data-reveal>05 / EDUCATION</p>
+        <h2 class="sec-title split" data-split>Studying the<br /><span class="grad-text">theory behind it.</span></h2>
+      </div>
+
+      <div class="edu-grid">
+        <article class="edu-card" data-reveal>
+          <div class="edu-meta"><span class="mono">Expected May 2028</span><span class="mono">Charlotte, NC</span></div>
+          <h3>University of North Carolina at Charlotte</h3>
+          <p class="edu-degree">B.S. Computer Science — Concentration in AI, Robotics &amp; Gaming</p>
+          <div class="edu-tags"><span>Artificial Intelligence</span><span>Robotics</span><span>Game Systems</span></div>
+        </article>
+        <article class="edu-card" data-reveal style="--d:120ms">
+          <div class="edu-meta"><span class="mono">Aug 2024 — Jun 2026</span><span class="mono">Raleigh, NC</span></div>
+          <h3>Wake Technical Community College</h3>
+          <p class="edu-degree">Associate in Science</p>
+          <div class="edu-tags"><span>Transfer Pathway</span><span>Computer Science Core</span></div>
+        </article>
+      </div>
+
+      <div class="beyond-grid">
+        <div class="beyond-card" data-reveal>
+          <h3 class="mono small-head">CERTIFICATIONS</h3>
+          <ul class="mini-list">
+            <li><span class="mini-title">AI Fluency for Builders</span><span class="mini-meta mono">Claude Academy · Sep 2026</span></li>
+            <li><span class="mini-title">Getting Started with Git &amp; GitHub</span><span class="mini-meta mono">IBM · Aug 2026</span></li>
+          </ul>
+        </div>
+        <div class="beyond-card" data-reveal style="--d:120ms">
+          <h3 class="mono small-head">LEADERSHIP &amp; INVOLVEMENT</h3>
+          <ul class="mini-list">
+            <li><span class="mini-title">Charge Robotics — FRC Team 2722</span><span class="mini-meta mono">Software Team Member · 2023 — 2024</span></li>
+            <li><span class="mini-title">Community Service</span><span class="mini-meta mono">Volunteer · 2020 — Present</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rover-lane" aria-hidden="true">
+    <span class="rover reverse">
+      <svg viewBox="0 0 140 72">
+        <g class="rover-body">
+          <rect x="24" y="22" width="92" height="24" rx="11" fill="url(#roverGrad)" stroke="rgba(62,242,255,0.5)" />
+          <rect x="40" y="10" width="34" height="14" rx="7" fill="#0c1420" stroke="rgba(139,92,246,0.6)" />
+          <line x1="52" y1="10" x2="52" y2="2" stroke="#8b5cf6" stroke-width="1.6" />
+          <circle class="rover-beacon" cx="52" cy="2" r="3" fill="#ff4bb0" />
+          <circle class="rover-eye" cx="104" cy="34" r="4" fill="#b6ff5c" />
+          <rect x="30" y="44" width="80" height="3" rx="1.5" fill="rgba(62,242,255,0.18)" />
+        </g>
+        <circle class="rover-wheel" cx="48" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
+        <circle class="rover-wheel" cx="94" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
+      </svg>
+    </span>
+  </div>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="section contact" id="contact">
+    <svg class="circuit contact-circuit" aria-hidden="true" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid slice">
+      <g stroke="rgba(139,92,246,0.4)" fill="none" stroke-width="1">
+        <path class="trace" d="M-20 120 H210 L254 76 H470 L514 120 H920" />
+        <path class="trace" d="M-20 330 H140 L184 374 H420 L464 330 H700 " />
+        <path class="trace" d="M-20 500 H260 L304 456 H540 L584 500 H920" />
+      </g>
+      <g class="nodes" fill="#a78bfa">
+        <circle cx="254" cy="76" r="3" /><circle cx="514" cy="120" r="3" />
+        <circle cx="184" cy="374" r="3" /><circle cx="464" cy="330" r="3" />
+        <circle cx="304" cy="456" r="3" /><circle cx="584" cy="500" r="3" />
+      </g>
+    </svg>
+    <div class="wrap">
+      <p class="sec-label mono" data-reveal>06 / CONTACT</p>
+      <h2 class="contact-title split" data-split>Let's build something<br /><span class="grad-text">that moves.</span></h2>
+      <p class="contact-sub" data-reveal style="--d:120ms">
+        Internships, robotics teams, backend work — if it involves making software behave in the
+        real world, I want to hear about it.
+      </p>
+
+      <div class="contact-actions" data-reveal style="--d:200ms">
+        <a class="btn btn-solid magnetic" href="mailto:Saibhargav.satya@gmail.com">
+          <span>Saibhargav.satya@gmail.com</span>
+        </a>
+        <button class="btn btn-outline" id="copyEmail" type="button" data-email="Saibhargav.satya@gmail.com">Copy email</button>
+      </div>
+
+      <div class="contact-grid">
+        <a class="contact-card" href="https://www.linkedin.com/in/sai-bhargav-yelamanchi/" target="_blank" rel="noopener" data-reveal>
+          <span class="mono">LINKEDIN</span>
+          <strong>sai-bhargav-yelamanchi</strong>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="contact-card" href="https://github.com/sai2005-1" target="_blank" rel="noopener" data-reveal style="--d:100ms">
+          <span class="mono">GITHUB</span>
+          <strong>sai2005-1</strong>
+          <span class="arrow">↗</span>
+        </a>
+        <a class="contact-card" href="tel:+18562925960" data-reveal style="--d:200ms">
+          <span class="mono">PHONE</span>
+          <strong>(856) 292-5960</strong>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
+    </div>
+    <div class="contact-orb" aria-hidden="true" data-parallax="-0.12"></div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span class="mono">© 2026 SAI BHARGAV YELAMANCHI</span>
+      <span class="mono">CHARLOTTE · NC</span>
+      <a class="mono" href="#top">BACK TO TOP ↑</a>
+    </div>
+  </footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Email copied</div>
+
+<script src="app.js"></script>
+</body>
+</html>
