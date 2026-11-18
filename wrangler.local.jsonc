@@ -1,0 +1,6 @@
+{
+  "name": "sai-portfolio-local",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-18",
+  "assets": { "directory": "./dist", "binding": "ASSETS" }
+}

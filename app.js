@@ -1,6 +1,7 @@
 /* =========================================================
-   interactions: particles, typing, scroll reveals, tilt,
-   parallax, counters, cursor
+   interactions
+   scroll reveals · typing · counters · cursor
+   + autonomous path playback · oscilloscope · live telemetry
    ========================================================= */
 (function () {
   "use strict";
@@ -9,17 +10,16 @@
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   /* ---------------------------------------------------------
-     split text into animated words
+     split section headings into animated words
      --------------------------------------------------------- */
   let wordIndex = 0;
 
-  function buildWords(node, gradient) {
+  function buildWords(node) {
     const frag = document.createDocumentFragment();
 
     Array.from(node.childNodes).forEach(function (child) {
       if (child.nodeType === 3) {
-        const tokens = child.textContent.split(/(\s+)/);
-        tokens.forEach(function (token) {
+        child.textContent.split(/(\s+)/).forEach(function (token) {
           if (!token.trim()) {
             if (token) frag.appendChild(document.createTextNode(token));
             return;
@@ -29,7 +29,6 @@
           const inner = document.createElement("i");
           inner.textContent = token;
           inner.style.setProperty("--i", wordIndex++);
-          if (gradient) inner.classList.add("grad-i");
           wrap.appendChild(inner);
           frag.appendChild(wrap);
         });
@@ -39,7 +38,7 @@
           return;
         }
         const copy = child.cloneNode(false);
-        copy.appendChild(buildWords(child, gradient || child.classList.contains("grad-text")));
+        copy.appendChild(buildWords(child));
         frag.appendChild(copy);
       }
     });
@@ -49,16 +48,14 @@
 
   document.querySelectorAll(".sec-title[data-split], .contact-title[data-split]").forEach(function (el) {
     wordIndex = 0;
-    const built = buildWords(el, el.classList.contains("grad-text"));
+    const built = buildWords(el);
     el.textContent = "";
     el.appendChild(built);
   });
 
   /* ---------------------------------------------------------
-     hero letters with a continuous gradient across the line
+     hero name letters
      --------------------------------------------------------- */
-  const accentLines = [];
-
   document.querySelectorAll(".hero-title .line[data-split]").forEach(function (line) {
     const text = line.textContent.trim();
     line.textContent = "";
@@ -69,26 +66,7 @@
       span.style.setProperty("--i", i);
       line.appendChild(span);
     });
-    if (line.classList.contains("accent")) accentLines.push(line);
   });
-
-  function paintAccentGradient() {
-    accentLines.forEach(function (line) {
-      const width = line.getBoundingClientRect().width || window.innerWidth * 0.8;
-      Array.from(line.children).forEach(function (ch) {
-        ch.style.backgroundImage = "linear-gradient(115deg, #3ef2ff, #8b5cf6 52%, #ff4bb0)";
-        ch.style.backgroundSize = width + "px 100%";
-        ch.style.backgroundPosition = "-" + ch.offsetLeft + "px 0";
-        ch.style.webkitBackgroundClip = "text";
-        ch.style.backgroundClip = "text";
-        ch.style.color = "transparent";
-      });
-    });
-  }
-  paintAccentGradient();
-  window.addEventListener("load", paintAccentGradient);
-  window.addEventListener("resize", paintAccentGradient);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(paintAccentGradient);
 
   /* ---------------------------------------------------------
      reveal on scroll
@@ -105,7 +83,7 @@
           }
         });
       },
-      { threshold: 0.14, rootMargin: "0px 0px -6% 0px" }
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
     );
     revealTargets.forEach(function (el) { revealObserver.observe(el); });
   } else {
@@ -128,8 +106,8 @@
           const word = words[wi];
           ci += deleting ? -1 : 1;
           typeEl.textContent = word.slice(0, ci);
-          let wait = deleting ? 34 : 58;
-          if (!deleting && ci === word.length) { deleting = true; wait = 1900; }
+          let wait = deleting ? 28 : 52;
+          if (!deleting && ci === word.length) { deleting = true; wait = 2100; }
           else if (deleting && ci === 0) { deleting = false; wi = (wi + 1) % words.length; wait = 320; }
           window.setTimeout(tick, wait);
         })();
@@ -144,7 +122,7 @@
   function runCounter(el) {
     const target = parseFloat(el.dataset.count);
     const suffix = el.dataset.suffix || "";
-    const duration = 1500;
+    const duration = 1400;
     const start = performance.now();
 
     function frame(now) {
@@ -174,6 +152,21 @@
   }
 
   /* ---------------------------------------------------------
+     telemetry binding
+     --------------------------------------------------------- */
+  const telGroups = {};
+  document.querySelectorAll("[data-tel]").forEach(function (node) {
+    const key = node.dataset.tel;
+    (telGroups[key] = telGroups[key] || []).push(node);
+  });
+
+  function setTel(key, value) {
+    const nodes = telGroups[key];
+    if (!nodes) return;
+    nodes.forEach(function (node) { node.textContent = value; });
+  }
+
+  /* ---------------------------------------------------------
      scroll-driven: progress, parallax, timeline, nav state
      --------------------------------------------------------- */
   const bar = document.getElementById("progressBar");
@@ -192,9 +185,10 @@
     const docH = document.documentElement.scrollHeight - vh;
 
     if (bar) bar.style.width = (docH > 0 ? Math.min(100, (y / docH) * 100) : 0) + "%";
-    if (nav) nav.classList.toggle("is-stuck", y > 24);
+    if (nav) nav.classList.toggle("is-stuck", y > 18);
 
     parallaxEls.forEach(function (el) {
+      if (window.innerWidth < 1081) { el.style.transform = ""; return; }
       const speed = parseFloat(el.dataset.parallax) || 0;
       const rect = el.getBoundingClientRect();
       const offset = (rect.top + rect.height / 2 - vh / 2) * speed;
@@ -242,7 +236,7 @@
   }
 
   /* ---------------------------------------------------------
-     cursor glow + dot
+     cursor
      --------------------------------------------------------- */
   if (canHover && !reduceMotion) {
     const glow = document.getElementById("cursorGlow");
@@ -253,33 +247,17 @@
     window.addEventListener("pointermove", function (e) {
       mx = e.clientX; my = e.clientY;
       document.body.classList.add("has-pointer");
-      const hot = e.target.closest("a, button, .pills li, .stat, .proj-card");
+      const hot = e.target.closest("a, button, .pills li, .stat, .proj-card, .contact-card");
       document.body.classList.toggle("cursor-hot", !!hot);
       if (dot) dot.style.transform = "translate3d(" + mx + "px," + my + "px,0)";
     }, { passive: true });
 
     (function loop() {
-      gx += (mx - gx) * 0.09;
-      gy += (my - gy) * 0.09;
+      gx += (mx - gx) * 0.08;
+      gy += (my - gy) * 0.08;
       if (glow) glow.style.transform = "translate3d(" + gx.toFixed(1) + "px," + gy.toFixed(1) + "px,0)";
       requestAnimationFrame(loop);
     })();
-  }
-
-  /* ---------------------------------------------------------
-     robot looks at the pointer
-     --------------------------------------------------------- */
-  const bot = document.getElementById("bot");
-  const heroEl = document.getElementById("hero");
-  if (bot && heroEl && canHover && !reduceMotion) {
-    heroEl.addEventListener("pointermove", function (e) {
-      const r = bot.getBoundingClientRect();
-      const dx = (e.clientX - (r.left + r.width / 2)) / Math.max(r.width, 1);
-      const dy = (e.clientY - (r.top + r.height / 2)) / Math.max(r.height, 1);
-      const clamp = function (v) { return Math.max(-1, Math.min(1, v)); };
-      bot.style.setProperty("--look-x", (clamp(dx * 1.8) * 7).toFixed(1) + "px");
-      bot.style.setProperty("--look-y", (clamp(dy * 1.8) * 5).toFixed(1) + "px");
-    }, { passive: true });
   }
 
   /* ---------------------------------------------------------
@@ -291,7 +269,7 @@
         const r = el.getBoundingClientRect();
         const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
         const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
-        el.style.transform = "translate(" + dx * 9 + "px," + dy * 7 + "px)";
+        el.style.transform = "translate(" + dx * 5 + "px," + dy * 4 + "px)";
       });
       el.addEventListener("pointerleave", function () { el.style.transform = ""; });
     });
@@ -310,7 +288,7 @@
         el.style.setProperty("--my", py * 100 + "%");
         if (el.classList.contains("tilt")) {
           el.style.transform =
-            "rotateY(" + (px - 0.5) * 7 + "deg) rotateX(" + (0.5 - py) * 7 + "deg) translateY(-4px)";
+            "rotateY(" + (px - 0.5) * 4 + "deg) rotateX(" + (0.5 - py) * 4 + "deg) translateY(-2px)";
         }
       });
       el.addEventListener("pointerleave", function () { el.style.transform = ""; });
@@ -318,116 +296,260 @@
   }
 
   /* ---------------------------------------------------------
-     hero particle field
+     autonomous path playback (field map)
      --------------------------------------------------------- */
-  const canvas = document.getElementById("hero-canvas");
-  if (canvas && canvas.getContext) {
-    const ctx = canvas.getContext("2d");
-    const hero = canvas.parentElement;
-    let w = 0, h = 0, points = [], raf = null;
-    const pointer = { x: -9999, y: -9999 };
+  const routePath = document.getElementById("autonPath");
+  const runTrail = document.getElementById("runTrail");
+  const botGroup = document.getElementById("autonBot");
 
-    function resize() {
+  if (routePath && runTrail && botGroup && routePath.getTotalLength) {
+    const total = routePath.getTotalLength();
+    const TRAVERSE = 16500;  // ms for the full auton routine
+    const HOLD = 1700;       // pause at the final waypoint
+    const FIELD_PX = 304;    // field border width in map units
+    const FIELD_M = 3.66;    // 12 ft
+
+    runTrail.style.strokeDasharray = total;
+    runTrail.style.strokeDashoffset = reduceMotion ? total * 0.42 : total;
+
+    let progress = reduceMotion ? 0.58 : 0;
+    let hold = 0;
+    let last = 0;
+
+    function setPose(p) {
+      const s = Math.max(0, Math.min(total, p * total));
+      const pt = routePath.getPointAtLength(s);
+      const a = routePath.getPointAtLength(Math.max(0, s - 4));
+      const b = routePath.getPointAtLength(Math.min(total, s + 4));
+      const angle = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+
+      botGroup.setAttribute(
+        "transform",
+        "translate(" + pt.x.toFixed(2) + "," + pt.y.toFixed(2) + ") rotate(" + (angle + 90).toFixed(2) + ")"
+      );
+      runTrail.style.strokeDashoffset = total * (1 - p);
+
+      const x = ((pt.x - 8) / FIELD_PX) * FIELD_M;
+      const y = ((312 - pt.y) / FIELD_PX) * FIELD_M;
+      const yaw = ((angle % 360) + 360) % 360;
+      setTel("x", x.toFixed(2));
+      setTel("y", y.toFixed(2));
+      setTel("yaw", yaw.toFixed(0));
+    }
+
+    setPose(progress);
+
+    function autonFrame(now) {
+      if (!last) last = now;
+      const dt = Math.min(64, now - last);
+      last = now;
+
+      if (hold > 0) {
+        hold -= dt;
+        if (hold <= 0) progress = 0;
+      } else {
+        progress += dt / TRAVERSE;
+        if (progress >= 1) { progress = 1; hold = HOLD; }
+      }
+
+      setPose(progress);
+      requestAnimationFrame(autonFrame);
+    }
+
+    if (!reduceMotion) requestAnimationFrame(autonFrame);
+  }
+
+  /* ---------------------------------------------------------
+     oscilloscope: commanded vs measured drive velocity
+     --------------------------------------------------------- */
+  const scope = document.getElementById("scope");
+  if (scope && scope.getContext) {
+    const sctx = scope.getContext("2d");
+    const SAMPLES = 170;
+    const CMD = [];       // commanded setpoint history
+    const ACT = [];       // measured velocity history
+
+    let w = 0, h = 0;
+    let cmd = 0;
+    let act = 0;
+    let elapsed = 0;
+    let nextStep = 1.1;
+    let raf = null;
+
+    function sizeScope() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const rect = hero.getBoundingClientRect();
-      w = rect.width; h = rect.height;
-      canvas.width = Math.max(1, Math.floor(w * dpr));
-      canvas.height = Math.max(1, Math.floor(h * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const rect = scope.getBoundingClientRect();
+      w = Math.max(1, Math.round(rect.width));
+      h = Math.max(1, Math.round(rect.height));
+      scope.width = Math.round(w * dpr);
+      scope.height = Math.round(h * dpr);
+      sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawScope();
+    }
 
-      const count = reduceMotion ? 40 : Math.min(120, Math.round((w * h) / 15000));
-      points = [];
-      for (let i = 0; i < count; i++) {
-        points.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.26,
-          vy: (Math.random() - 0.5) * 0.26,
-          r: Math.random() * 1.4 + 0.5
+    function drawScope() {
+      const padL = 24, padR = 8, padT = 8, padB = 10;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+      const yMax = 2.8;
+
+      sctx.clearRect(0, 0, w, h);
+
+      // grid
+      sctx.lineWidth = 1;
+      sctx.strokeStyle = "rgba(255,255,255,0.07)";
+      for (let i = 0; i <= 4; i++) {
+        const y = padT + (plotH / 4) * i;
+        sctx.beginPath();
+        sctx.moveTo(padL, y + 0.5);
+        sctx.lineTo(padL + plotW, y + 0.5);
+        sctx.stroke();
+      }
+      sctx.strokeStyle = "rgba(255,255,255,0.045)";
+      for (let i = 0; i <= 8; i++) {
+        const x = padL + (plotW / 8) * i;
+        sctx.beginPath();
+        sctx.moveTo(x + 0.5, padT);
+        sctx.lineTo(x + 0.5, padT + plotH);
+        sctx.stroke();
+      }
+
+      // axis labels
+      sctx.fillStyle = "rgba(255,255,255,0.28)";
+      sctx.font = "8px 'IBM Plex Mono', monospace";
+      sctx.textAlign = "right";
+      sctx.fillText("2.8", padL - 4, padT + 7);
+      sctx.fillText("0", padL - 4, padT + plotH);
+      sctx.textAlign = "left";
+      sctx.fillText("s", padL + 2, padT + plotH + 8);
+
+      function plot(series, stroke, width, dash) {
+        if (series.length < 2) return;
+        sctx.beginPath();
+        sctx.lineWidth = width;
+        sctx.strokeStyle = stroke;
+        sctx.setLineDash(dash || []);
+        series.forEach(function (v, i) {
+          const x = padL + (i / (SAMPLES - 1)) * plotW;
+          const y = padT + plotH - Math.min(1, Math.max(0, v / yMax)) * plotH;
+          if (i === 0) sctx.moveTo(x, y); else sctx.lineTo(x, y);
         });
+        sctx.stroke();
+        sctx.setLineDash([]);
       }
-      draw();
-    }
 
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
+      plot(ACT, "rgba(240,161,46,0.13)", 8);
+      plot(CMD, "rgba(87,182,217,0.75)", 1.2, [3, 3]);
+      plot(ACT, "#f0a12e", 1.6);
 
-      for (let i = 0; i < points.length; i++) {
-        const p = points[i];
-
-        for (let j = i + 1; j < points.length; j++) {
-          const q = points[j];
-          const dx = p.x - q.x, dy = p.y - q.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 20000) {
-            const a = (1 - d2 / 20000) * 0.34;
-            ctx.strokeStyle = "rgba(96, 200, 255," + a.toFixed(3) + ")";
-            ctx.lineWidth = 0.7;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(q.x, q.y);
-            ctx.stroke();
-          }
-        }
-
-        const mdx = p.x - pointer.x, mdy = p.y - pointer.y;
-        const md2 = mdx * mdx + mdy * mdy;
-        if (md2 < 34000) {
-          const a = (1 - md2 / 34000) * 0.6;
-          ctx.strokeStyle = "rgba(62, 242, 255," + a.toFixed(3) + ")";
-          ctx.lineWidth = 0.8;
-          ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(pointer.x, pointer.y);
-          ctx.stroke();
-        }
-
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(168, 228, 255, 0.72)";
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
+      // live cursor
+      if (ACT.length) {
+        const v = ACT[ACT.length - 1];
+        const y = padT + plotH - Math.min(1, Math.max(0, v / yMax)) * plotH;
+        const x = padL + plotW;
+        sctx.fillStyle = "#f0a12e";
+        sctx.beginPath();
+        sctx.arc(x - 2, y, 2, 0, Math.PI * 2);
+        sctx.fill();
       }
     }
 
-    function step() {
-      for (let i = 0; i < points.length; i++) {
-        const p = points[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20;
-        if (p.y > h + 20) p.y = -20;
+    function stepScope(dt) {
+      elapsed += dt;
+      if (elapsed >= nextStep) {
+        cmd = cmd > 0.1 ? 0 : 2.4;
+        nextStep = elapsed + (cmd > 0 ? 3600 : 2200);
       }
-      draw();
-      raf = requestAnimationFrame(step);
+      const tau = 0.17;
+      act += (cmd - act) * Math.min(1, dt / 1000 / tau);
+      const measured = Math.max(0, act + (Math.random() - 0.5) * 0.055);
+      const error = Math.abs(cmd - measured);
+
+      CMD.push(cmd);
+      ACT.push(measured);
+      if (CMD.length > SAMPLES) CMD.shift();
+      if (ACT.length > SAMPLES) ACT.shift();
+
+      setTel("err", error.toFixed(2));
     }
 
-    function start() { if (!raf) step(); }
-    function stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
-
-    hero.addEventListener("pointermove", function (e) {
-      const r = hero.getBoundingClientRect();
-      pointer.x = e.clientX - r.left;
-      pointer.y = e.clientY - r.top;
-    }, { passive: true });
-    hero.addEventListener("pointerleave", function () {
-      pointer.x = -9999; pointer.y = -9999;
-    });
-
-    window.addEventListener("resize", resize);
-    resize();
+    let lastScope = 0;
+    function scopeFrame(now) {
+      if (!lastScope) lastScope = now;
+      const dt = Math.min(80, now - lastScope);
+      lastScope = now;
+      stepScope(dt);
+      drawScope();
+      raf = requestAnimationFrame(scopeFrame);
+    }
 
     if (reduceMotion) {
-      draw();
-    } else if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) start(); else stop();
-      }, { threshold: 0.02 }).observe(hero);
-    } else {
-      start();
+      for (let i = 0; i < SAMPLES; i++) {
+        const t = i / SAMPLES;
+        CMD.push(t > 0.1 && t < 0.62 ? 2.4 : 0);
+        const target = CMD[i];
+        act += (target - act) * 0.22;
+        ACT.push(act + (Math.random() - 0.5) * 0.03);
+      }
+      setTel("err", "0.05");
+    }
+
+    window.addEventListener("resize", sizeScope);
+    sizeScope();
+
+    if (!reduceMotion) {
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) {
+            if (!raf) { lastScope = 0; raf = requestAnimationFrame(scopeFrame); }
+          } else if (raf) {
+            cancelAnimationFrame(raf);
+            raf = null;
+          }
+        }, { threshold: 0.05 }).observe(scope);
+      } else {
+        raf = requestAnimationFrame(scopeFrame);
+      }
     }
   }
+
+  /* ---------------------------------------------------------
+     live telemetry (battery sag, draw, loop time, bus load)
+     --------------------------------------------------------- */
+  (function telemetry() {
+    if (reduceMotion) {
+      setTel("bat", "12.47");
+      setTel("current", "38.2");
+      setTel("loop", "5.0");
+      setTel("can", "82");
+      return;
+    }
+
+    let current = 38;
+    let battery = 12.52;
+    let t = 0;
+
+    function sample() {
+      t += 0.12;
+
+      current += (26 + Math.sin(t * 0.9) * 18 + (Math.random() - 0.5) * 9 - current) * 0.25;
+      current = Math.max(4, Math.min(78, current));
+
+      const target = 12.62 - (current / 78) * 0.42;
+      battery += (target - battery) * 0.35;
+
+      const loop = 5.0 + (Math.random() - 0.5) * 0.7;
+      const can = 78 + Math.sin(t * 0.5) * 8 + (Math.random() - 0.5) * 4;
+
+      setTel("bat", battery.toFixed(2));
+      setTel("current", current.toFixed(1));
+      setTel("loop", loop.toFixed(1));
+      setTel("can", Math.round(can));
+    }
+
+    sample();
+    window.setInterval(sample, 120);
+  })();
 
   /* ---------------------------------------------------------
      copy email

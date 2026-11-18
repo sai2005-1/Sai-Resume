@@ -7,21 +7,26 @@
 <meta name="description" content="Sai Bhargav Yelamanchi — robotics software engineer and computer science student at UNC Charlotte. Autonomous control, drivetrain logic and real-time sensor feedback." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
 <!-- ===== background layers ===== -->
 <div class="bg-base" aria-hidden="true"></div>
-<div class="bg-aurora" aria-hidden="true">
-  <span class="blob blob-1"></span>
-  <span class="blob blob-2"></span>
-  <span class="blob blob-3"></span>
-</div>
 <div class="bg-grid" aria-hidden="true"></div>
 <div class="bg-grain" aria-hidden="true"></div>
-<div class="scanlines" aria-hidden="true"></div>
+
+<!-- ===== robot status bar ===== -->
+<div class="statusbar mono" aria-hidden="true">
+  <span class="sb-item"><i class="led ok"></i><b>SBY-01</b></span>
+  <span class="sb-item sb-hide">roboRIO 2.0</span>
+  <span class="sb-item">MODE <b>TELEOP</b></span>
+  <span class="sb-item">BATT <b data-tel="bat">12.47</b> V</span>
+  <span class="sb-item">LOOP <b data-tel="loop">5.0</b> ms</span>
+  <span class="sb-item sb-hide">CAN <b data-tel="can">82</b>%</span>
+  <span class="sb-item sb-right sb-hide">FRC 2722 · CHARLOTTE, NC</span>
+</div>
 
 <!-- ===== chrome ===== -->
 <div class="scroll-progress" aria-hidden="true"><span id="progressBar"></span></div>
@@ -31,7 +36,7 @@
 <header class="nav" id="nav">
   <a class="brand" href="#top" aria-label="Home">
     <span class="brand-mark">SBY</span>
-    <span class="brand-name">Sai Bhargav</span>
+    <span class="brand-name">Sai Bhargav <em>· Robotics SWE</em></span>
   </a>
   <nav class="nav-links" aria-label="Sections">
     <a href="#about"><i>01</i>About</a>
@@ -47,7 +52,6 @@
 
   <!-- ================= HERO ================= -->
   <section class="hero" id="hero">
-    <canvas id="hero-canvas" aria-hidden="true"></canvas>
     <div class="hero-inner">
       <div class="hero-copy">
         <p class="eyebrow" data-reveal>
@@ -61,7 +65,7 @@
 
         <p class="hero-role" data-reveal style="--d:220ms">
           <span class="mono">&gt;</span>
-          <span id="roleType" class="type-target" data-words='["Autonomous control systems","Drivetrain & sensor logic","C++ for competitive robots","AI, Robotics & Gaming"]'></span>
+          <span id="roleType" class="type-target" data-words='["Autonomous routines in C++","Drivetrain &amp; sensor integration","PID tuning on real hardware","AI, Robotics &amp; Gaming"]'></span>
           <span class="caret" aria-hidden="true"></span>
         </p>
 
@@ -74,130 +78,148 @@
         <div class="hero-actions" data-reveal style="--d:420ms">
           <a class="btn btn-solid magnetic" href="#experience">
             <span>View experience</span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
           <a class="btn btn-outline magnetic" href="#contact">Get in touch</a>
         </div>
 
         <div class="hero-meta" data-reveal style="--d:520ms">
-          <span class="chip"><span class="pulse-dot small"></span> Gold Rush Robotics (VEX U)</span>
+          <span class="chip"><span class="pulse-dot small"></span> VEX U · Gold Rush Robotics</span>
           <span class="chip">Expected B.S. 2028</span>
           <span class="chip">Open to internships</span>
         </div>
+
+        <dl class="hero-spec mono" data-reveal style="--d:600ms">
+          <div><dt>CONTROL</dt><dd>PID · sensor fusion</dd></div>
+          <div><dt>STACK</dt><dd>WPILib · VEXcode</dd></div>
+          <div><dt>LANG</dt><dd>C++ / Java / Python</dd></div>
+        </dl>
       </div>
 
       <div class="hero-visual" data-reveal="scale" style="--d:260ms">
-        <div class="orb-wrap" data-parallax="0.05">
-          <div class="orb" aria-hidden="true">
-            <span class="ring ring-a"></span>
-            <span class="ring ring-b"></span>
-            <span class="ring ring-c"></span>
-            <span class="orb-sweep"></span>
-          </div>
+        <div class="console" data-parallax="0.03">
 
-          <div class="bot" id="bot" aria-hidden="true">
-            <svg class="bot-svg" viewBox="0 0 260 330">
-              <defs>
-                <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#1d2740" />
-                  <stop offset="0.55" stop-color="#0f1522" />
-                  <stop offset="1" stop-color="#070a12" />
-                </linearGradient>
-                <linearGradient id="visorGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#3ef2ff" />
-                  <stop offset="1" stop-color="#7ee7ff" />
-                </linearGradient>
-                <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#3ef2ff" />
-                  <stop offset="1" stop-color="#8b5cf6" />
-                </linearGradient>
-                <radialGradient id="coreGrad">
-                  <stop offset="0" stop-color="#e2feff" />
-                  <stop offset="0.45" stop-color="#3ef2ff" />
-                  <stop offset="1" stop-color="#8b5cf6" />
-                </radialGradient>
-                <filter id="glowSoft" x="-70%" y="-70%" width="240%" height="240%">
-                  <feGaussianBlur stdDeviation="7" />
-                </filter>
-              </defs>
+          <!-- ---- auton field map ---- -->
+          <section class="panel panel-field">
+            <header class="panel-head">
+              <span class="panel-title mono">AUTON_PATH <i>/</i> FIELD TOP VIEW</span>
+              <span class="panel-flag mono"><i class="led ok"></i>RUNNING</span>
+            </header>
 
-              <ellipse class="bot-shadow" cx="130" cy="316" rx="74" ry="11" fill="#3ef2ff" opacity="0.2" filter="url(#glowSoft)" />
+            <div class="field-body">
+              <div class="field-wrap">
+                <svg class="field" viewBox="0 0 320 320" role="img" aria-label="Top-down field map showing an autonomous path between waypoints">
+                  <defs>
+                    <pattern id="fMinor" width="20" height="20" patternUnits="userSpaceOnUse">
+                      <path d="M20 0H0V20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+                    </pattern>
+                    <pattern id="fMajor" width="80" height="80" patternUnits="userSpaceOnUse">
+                      <rect width="80" height="80" fill="url(#fMinor)" />
+                      <path d="M80 0H0V80" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1" />
+                    </pattern>
+                    <marker id="arrow" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                      <path d="M0 0 L8 4 L0 8 Z" fill="#f0a12e" />
+                    </marker>
+                  </defs>
 
-              <g class="bot-antenna">
-                <path d="M130 52 V26" stroke="url(#edgeGrad)" stroke-width="2.6" stroke-linecap="round" />
-                <circle class="beacon-halo" cx="130" cy="18" r="13" fill="#ff4bb0" opacity="0.28" filter="url(#glowSoft)" />
-                <circle class="beacon" cx="130" cy="18" r="6" fill="#ff4bb0" />
-              </g>
+                  <rect x="8" y="8" width="304" height="304" fill="rgba(255,255,255,0.014)" stroke="rgba(255,255,255,0.16)" />
+                  <rect x="8" y="8" width="304" height="304" fill="url(#fMajor)" />
 
-              <g class="bot-head">
-                <rect x="74" y="48" width="112" height="88" rx="30" fill="url(#metal)" stroke="rgba(62,242,255,0.45)" stroke-width="1.6" />
-                <rect x="86" y="66" width="88" height="46" rx="23" fill="#04070e" stroke="rgba(62,242,255,0.3)" />
-                <g class="bot-face">
-                  <rect class="eye" x="103" y="80" width="14" height="17" rx="7" fill="url(#visorGrad)" />
-                  <rect class="eye" x="143" y="80" width="14" height="17" rx="7" fill="url(#visorGrad)" />
-                  <rect class="visor-scan" x="90" y="78" width="80" height="2.5" rx="1.2" fill="#d8fbff" opacity="0.5" />
-                </g>
-                <rect x="60" y="74" width="12" height="28" rx="6" fill="#101a2a" stroke="rgba(62,242,255,0.3)" />
-                <rect x="188" y="74" width="12" height="28" rx="6" fill="#101a2a" stroke="rgba(62,242,255,0.3)" />
-              </g>
+                  <!-- field elements -->
+                  <g class="field-el">
+                    <rect x="228" y="14" width="72" height="26" rx="2" fill="rgba(240,161,46,0.10)" stroke="rgba(240,161,46,0.45)" />
+                    <text x="264" y="31" text-anchor="middle">SPEAKER</text>
+                    <rect x="14" y="146" width="26" height="52" rx="2" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.22)" />
+                    <text x="27" y="176" text-anchor="middle" transform="rotate(-90 27 176)">AMP</text>
+                    <rect x="132" y="132" width="56" height="56" rx="3" fill="rgba(255,255,255,0.028)" stroke="rgba(255,255,255,0.24)" stroke-dasharray="4 4" />
+                    <text x="160" y="164" text-anchor="middle">STAGE</text>
+                  </g>
 
-              <rect x="115" y="136" width="30" height="12" rx="5" fill="#0d1522" stroke="rgba(62,242,255,0.22)" />
+                  <!-- notes on the floor -->
+                  <g class="field-notes">
+                    <circle cx="146" cy="246" r="4" />
+                    <circle cx="234" cy="212" r="4" />
+                    <circle cx="96" cy="150" r="4" />
+                  </g>
 
-              <g class="bot-torso">
-                <rect x="78" y="146" width="104" height="96" rx="26" fill="url(#metal)" stroke="rgba(62,242,255,0.4)" stroke-width="1.6" />
-                <circle class="core-halo" cx="130" cy="186" r="34" fill="#3ef2ff" opacity="0.16" filter="url(#glowSoft)" />
-                <circle class="core-ring" cx="130" cy="186" r="26" fill="none" stroke="rgba(62,242,255,0.4)" stroke-dasharray="4 7" />
-                <circle class="core" cx="130" cy="186" r="14" fill="url(#coreGrad)" />
-                <rect x="104" y="218" width="52" height="5" rx="2.5" fill="rgba(62,242,255,0.22)" />
-                <text class="bot-label" x="130" y="236" text-anchor="middle">SBY</text>
-              </g>
+                  <!-- planned path -->
+                  <path class="path-plan" d="M58 272 C 92 268 120 258 146 246 C 178 232 206 224 234 212 C 252 180 258 132 264 96 C 264 96 210 88 176 100 C 164 105 160 118 160 128" />
+                  <!-- travelled path -->
+                  <path id="runTrail" class="path-run" d="M58 272 C 92 268 120 258 146 246 C 178 232 206 224 234 212 C 252 180 258 132 264 96 C 264 96 210 88 176 100 C 164 105 160 118 160 128" />
+                  <path id="autonPath" class="path-route" d="M58 272 C 92 268 120 258 146 246 C 178 232 206 224 234 212 C 252 180 258 132 264 96 C 264 96 210 88 176 100 C 164 105 160 118 160 128" />
 
-              <g class="arm arm-left">
-                <circle cx="78" cy="164" r="12" fill="#111a29" stroke="rgba(62,242,255,0.42)" />
-                <rect x="54" y="166" width="14" height="50" rx="7" fill="url(#metal)" stroke="rgba(62,242,255,0.3)" />
-                <rect x="49" y="212" width="24" height="15" rx="7" fill="#0f1826" stroke="rgba(139,92,246,0.55)" />
-              </g>
+                  <!-- waypoints -->
+                  <g class="wpts">
+                    <g><circle cx="58" cy="272" r="3.4" /><text x="66" y="286">W0</text></g>
+                    <g><circle cx="146" cy="246" r="3.4" /><text x="154" y="252">W1</text></g>
+                    <g><circle cx="264" cy="96" r="3.4" /><text x="238" y="86">W2</text></g>
+                    <g><circle cx="160" cy="128" r="3.4" /><text x="168" y="122">W3</text></g>
+                  </g>
 
-              <g class="arm arm-right">
-                <circle cx="182" cy="164" r="12" fill="#111a29" stroke="rgba(62,242,255,0.42)" />
-                <rect x="192" y="166" width="14" height="50" rx="7" fill="url(#metal)" stroke="rgba(62,242,255,0.3)" />
-                <rect x="187" y="212" width="24" height="15" rx="7" fill="#0f1826" stroke="rgba(139,92,246,0.55)" />
-              </g>
+                  <!-- robot pose -->
+                  <g id="autonBot" class="auton-bot" transform="translate(58,272)">
+                    <rect x="-22" y="-22" width="44" height="44" rx="2.5" />
+                    <rect class="wh" x="-20" y="-17" width="7" height="13" rx="1" />
+                    <rect class="wh" x="-20" y="4" width="7" height="13" rx="1" />
+                    <rect class="wh" x="13" y="-17" width="7" height="13" rx="1" />
+                    <rect class="wh" x="13" y="4" width="7" height="13" rx="1" />
+                    <line class="axis" x1="0" y1="-22" x2="0" y2="-30" />
+                    <circle class="cog" r="2.4" />
+                  </g>
 
-              <g class="bot-base">
-                <rect x="86" y="244" width="88" height="12" rx="6" fill="#0c141f" stroke="rgba(62,242,255,0.22)" />
-                <g>
-                  <rect x="68" y="256" width="46" height="38" rx="19" fill="#0a111b" stroke="rgba(62,242,255,0.38)" />
-                  <circle class="wheel" cx="91" cy="275" r="11" fill="none" stroke="#3ef2ff" stroke-width="2.5" stroke-dasharray="4 5" />
-                  <circle cx="91" cy="275" r="3.5" fill="#3ef2ff" />
-                </g>
-                <g>
-                  <rect x="146" y="256" width="46" height="38" rx="19" fill="#0a111b" stroke="rgba(62,242,255,0.38)" />
-                  <circle class="wheel" cx="169" cy="275" r="11" fill="none" stroke="#3ef2ff" stroke-width="2.5" stroke-dasharray="4 5" />
-                  <circle cx="169" cy="275" r="3.5" fill="#3ef2ff" />
-                </g>
-              </g>
-            </svg>
-          </div>
+                  <!-- scale -->
+                  <g class="scalebar">
+                    <line x1="18" y1="300" x2="98" y2="300" />
+                    <line x1="18" y1="296" x2="18" y2="304" />
+                    <line x1="98" y1="296" x2="98" y2="304" />
+                    <text x="58" y="294" text-anchor="middle">1 m</text>
+                  </g>
+                </svg>
+              </div>
 
-          <div class="holo" aria-hidden="true">
-            <div class="holo-head"><span class="mono">AUTON_BUILD</span><span class="holo-dot"></span></div>
-            <div class="holo-rows">
-              <i style="--w:82%"></i>
-              <i style="--w:58%"></i>
-              <i style="--w:94%"></i>
-              <i style="--w:44%"></i>
+              <ol class="route mono">
+                <li><span>W0</span><b>START</b><i>2.31 m</i></li>
+                <li><span>W1</span><b>NOTE</b><i>1.84 m</i></li>
+                <li><span>W2</span><b>SPEAKER</b><i>2.66 m</i></li>
+                <li><span>W3</span><b>STAGE</b><i>1.12 m</i></li>
+              </ol>
             </div>
-            <div class="holo-foot mono">SENSORS · SYNCED</div>
-          </div>
 
-          <span class="glyph g1" aria-hidden="true"></span>
-          <span class="glyph g2" aria-hidden="true"></span>
-          <span class="glyph g3" aria-hidden="true"></span>
+            <footer class="panel-foot mono">
+              <span>POSE <b data-tel="x">0.60</b> , <b data-tel="y">0.48</b> m</span>
+              <span>YAW <b data-tel="yaw">0</b>°</span>
+              <span>SCALE 1:24</span>
+            </footer>
+          </section>
 
-          <div class="hud hud-tl mono">SYS / ONLINE</div>
-          <div class="hud hud-br mono">AUTON / READY</div>
-          <div class="hud-line" aria-hidden="true"></div>
+          <!-- ---- scope ---- -->
+          <section class="panel panel-scope">
+            <header class="panel-head">
+              <span class="panel-title mono">DRIVE_VEL <i>/</i> SETPOINT vs MEASURED</span>
+              <span class="panel-legend mono">
+                <i class="sw sw-cmd"></i>CMD
+                <i class="sw sw-act"></i>ACT
+              </span>
+            </header>
+            <canvas id="scope" height="150" aria-label="Oscilloscope trace of drive velocity setpoint and measured velocity"></canvas>
+            <footer class="panel-foot mono">
+              <span>2.4 m/s</span><span>Δt 5 ms</span><span>ERR <b data-tel="err">0.06</b> m/s</span>
+            </footer>
+          </section>
+
+          <!-- ---- telemetry ---- -->
+          <section class="panel panel-tel">
+            <header class="panel-head">
+              <span class="panel-title mono">TELEMETRY <i>/</i> LIVE</span>
+              <span class="panel-flag mono"><i class="led ok"></i>CAN 2.0</span>
+            </header>
+            <dl class="telemetry">
+              <div><dt>BATTERY</dt><dd><span data-tel="bat">12.47</span><em>V</em></dd></div>
+              <div><dt>DRAW</dt><dd><span data-tel="current">38.2</span><em>A</em></dd></div>
+              <div><dt>LOOP</dt><dd><span data-tel="loop">5.0</span><em>ms</em></dd></div>
+              <div><dt>CAN UTIL</dt><dd><span data-tel="can">82</span><em>%</em></dd></div>
+            </dl>
+          </section>
         </div>
       </div>
     </div>
@@ -210,25 +232,28 @@
 
   <!-- ================= TICKER ================= -->
   <div class="ticker" aria-hidden="true">
-    <div class="ticker-track" id="tickerTrack">
-      <span>C++</span><span>JAVA</span><span>PYTHON</span><span>RISC-V ASM</span><span>SPRING BOOT</span><span>MONGODB</span><span>WPILIB</span><span>VEXCODE</span><span>AUTONOMOUS CONTROL</span><span>SENSOR INTEGRATION</span><span>GIT</span><span>POSTMAN</span>
+    <span class="ticker-label mono">STACK</span>
+    <div class="ticker-viewport">
+      <div class="ticker-track" id="tickerTrack">
+        <span>C++</span><span>WPILIB</span><span>VEXCODE</span><span>JAVA</span><span>PYTHON</span><span>RISC-V ASM</span><span>PID CONTROL</span><span>SENSOR FUSION</span><span>SPRING BOOT</span><span>MONGODB</span><span>GIT</span><span>POSTMAN</span>
+      </div>
     </div>
   </div>
 
   <!-- ================= ABOUT ================= -->
   <section class="section" id="about">
     <svg class="circuit" aria-hidden="true" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid slice">
-      <g stroke="rgba(62,242,255,0.35)" fill="none" stroke-width="1">
+      <g stroke="rgba(240,161,46,0.34)" fill="none" stroke-width="1">
         <path class="trace" d="M-20 96 H150 L196 50 H392 L436 96 H720" />
         <path class="trace" d="M-20 210 H96 L140 254 H300 L344 210 H610 L654 254 H920" />
         <path class="trace" d="M-20 420 H180 L226 464 H430 L474 420 H700 L744 464 H920" />
         <path class="trace" d="M-20 540 H120 L164 496 H360 L404 540 H660" />
       </g>
-      <g class="nodes" fill="#3ef2ff">
-        <circle cx="196" cy="50" r="3" /><circle cx="436" cy="96" r="3" />
-        <circle cx="140" cy="254" r="3" /><circle cx="654" cy="254" r="3" />
-        <circle cx="226" cy="464" r="3" /><circle cx="474" cy="420" r="3" />
-        <circle cx="164" cy="496" r="3" /><circle cx="660" cy="540" r="3" />
+      <g class="nodes" fill="#f0a12e">
+        <circle cx="196" cy="50" r="2.6" /><circle cx="436" cy="96" r="2.6" />
+        <circle cx="140" cy="254" r="2.6" /><circle cx="654" cy="254" r="2.6" />
+        <circle cx="226" cy="464" r="2.6" /><circle cx="474" cy="420" r="2.6" />
+        <circle cx="164" cy="496" r="2.6" /><circle cx="660" cy="540" r="2.6" />
       </g>
     </svg>
     <div class="wrap">
@@ -276,21 +301,23 @@
         </div>
       </div>
 
-      <div class="systems" aria-hidden="true">
+      <div class="systems">
         <div class="sys-card">
-          <span class="sys-label mono">RADAR</span>
-          <svg class="radar-svg" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(62,242,255,0.18)" />
-            <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(62,242,255,0.12)" />
-            <circle cx="50" cy="50" r="14" fill="none" stroke="rgba(62,242,255,0.1)" />
-            <path d="M50 50 L50 4" stroke="#3ef2ff" stroke-width="1.8" class="radar-needle" />
-            <circle class="blip" cx="68" cy="36" r="2.6" fill="#ff4bb0" />
-            <circle class="blip b2" cx="34" cy="62" r="2.2" fill="#b6ff5c" />
+          <span class="sys-label mono">IMU / HEADING</span>
+          <svg class="imu-svg" viewBox="0 0 120 92" aria-hidden="true">
+            <circle cx="60" cy="46" r="32" fill="none" stroke="rgba(255,255,255,0.14)" />
+            <circle cx="60" cy="46" r="22" fill="none" stroke="rgba(255,255,255,0.08)" stroke-dasharray="2 5" />
+            <path d="M60 8v6M60 78v6M22 46h6M92 46h6" stroke="rgba(255,255,255,0.2)" />
+            <text x="60" y="6" text-anchor="middle">0</text>
+            <text x="106" y="49" text-anchor="middle">90</text>
+            <g class="imu-needle"><line x1="60" y1="46" x2="60" y2="18" /></g>
+            <circle cx="60" cy="46" r="2.5" fill="#f0a12e" />
           </svg>
+          <span class="sys-meta mono">YAW <b data-tel="yaw">0</b>° · GYRO CAL OK</span>
         </div>
 
         <div class="sys-card">
-          <span class="sys-label mono">TELEMETRY</span>
+          <span class="sys-label mono">DRIVE CURRENT / 4 CH</span>
           <div class="bars">
             <i style="--h:32%;--dl:0s"></i><i style="--h:58%;--dl:.15s"></i><i style="--h:44%;--dl:.05s"></i>
             <i style="--h:76%;--dl:.3s"></i><i style="--h:50%;--dl:.1s"></i><i style="--h:88%;--dl:.22s"></i>
@@ -299,37 +326,34 @@
             <i style="--h:72%;--dl:.02s"></i><i style="--h:40%;--dl:.32s"></i><i style="--h:62%;--dl:.18s"></i>
             <i style="--h:84%;--dl:.28s"></i><i style="--h:48%;--dl:.06s"></i><i style="--h:70%;--dl:.24s"></i>
           </div>
-          <span class="sys-meta mono">MOTOR OUTPUT · LIVE</span>
+          <span class="sys-meta mono">FL · FR · RL · RR @ 100 Hz</span>
         </div>
 
         <div class="sys-card">
-          <span class="sys-label mono">SERVO</span>
-          <svg viewBox="0 0 120 78">
-            <defs>
-              <linearGradient id="servoGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0" stop-color="#3ef2ff" />
-                <stop offset="1" stop-color="#8b5cf6" />
-              </linearGradient>
-            </defs>
-            <path d="M14 66 A46 46 0 0 1 106 66" fill="none" stroke="rgba(122,145,200,0.22)" stroke-width="6" stroke-linecap="round" />
-            <path d="M14 66 A46 46 0 0 1 106 66" fill="none" stroke="url(#servoGrad)" stroke-width="6" stroke-linecap="round" stroke-dasharray="145" stroke-dashoffset="58" />
-            <g class="needle"><line x1="60" y1="66" x2="60" y2="26" stroke="#3ef2ff" stroke-width="2" stroke-linecap="round" /></g>
-            <circle cx="60" cy="66" r="4.5" fill="#3ef2ff" />
+          <span class="sys-label mono">SERVO / HOOD ANGLE</span>
+          <svg viewBox="0 0 120 78" aria-hidden="true">
+            <path d="M14 66 A46 46 0 0 1 106 66" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="7" stroke-linecap="butt" />
+            <path d="M14 66 A46 46 0 0 1 106 66" fill="none" stroke="#f0a12e" stroke-width="7" stroke-linecap="butt" stroke-dasharray="145" stroke-dashoffset="58" opacity="0.85" />
+            <text class="tick" x="14" y="76">0°</text>
+            <text class="tick" x="106" y="76" text-anchor="end">180°</text>
+            <g class="needle"><line x1="60" y1="66" x2="60" y2="26" /></g>
+            <circle cx="60" cy="66" r="3.5" fill="#f0a12e" />
           </svg>
-          <span class="sys-meta mono">ARM ANGLE · 42°</span>
+          <span class="sys-meta mono">SETPT 42° · TOL ±1.5°</span>
         </div>
 
         <div class="sys-log mono">
-          <span>&gt; AUTON PATH LOADED</span>
-          <span>&gt; SENSOR BUS OK</span>
-          <span>&gt; MOTOR GROUPS SYNCED</span>
+          <span><em>0.004</em> drivetrain · 4 motors OK</span>
+          <span><em>0.006</em> gyro · yaw zeroed</span>
+          <span><em>0.009</em> auton path loaded · 4 wpts</span>
+          <span><em>0.014</em> can bus · 82% util</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ================= SKILLS ================= -->
-  <section class="section" id="skills" data-mark="SYSTEMS">
+  <section class="section" id="skills" data-mark="02">
     <div class="wrap">
       <div class="sec-head">
         <p class="sec-label mono" data-reveal>02 / SKILLS</p>
@@ -342,24 +366,28 @@
           <ul class="pills">
             <li>C++</li><li>Java</li><li>Python</li><li>RISC-V Assembly</li><li>HTML</li><li>CSS</li>
           </ul>
+          <span class="skill-foot mono">USED DAILY · 2022 — PRESENT</span>
         </article>
         <article class="skill-card" data-reveal style="--d:100ms">
           <div class="skill-top"><span class="mono">B</span><h3>Frameworks &amp; Data</h3></div>
           <ul class="pills">
             <li>Spring Boot</li><li>MongoDB</li><li>REST APIs</li><li>Postman</li>
           </ul>
+          <span class="skill-foot mono">SERVICE LAYER · SCHEMA · TESTING</span>
         </article>
         <article class="skill-card" data-reveal style="--d:200ms">
           <div class="skill-top"><span class="mono">C</span><h3>Robotics &amp; Hardware</h3></div>
           <ul class="pills">
             <li>WPILib</li><li>VEXcode C++</li><li>Autonomous Control Logic</li><li>Sensor Integration</li><li>Drivetrain Controls</li>
           </ul>
+          <span class="skill-foot mono">CLOSED LOOP · ON-HARDWARE TUNING</span>
         </article>
         <article class="skill-card" data-reveal style="--d:300ms">
           <div class="skill-top"><span class="mono">D</span><h3>Tools &amp; Creative</h3></div>
           <ul class="pills">
             <li>Git</li><li>GitHub</li><li>VS Code</li><li>Eclipse</li><li>RARS</li><li>Photoshop</li><li>Premiere Pro</li>
           </ul>
+          <span class="skill-foot mono">VERSION CONTROL · DOCUMENTATION</span>
         </article>
       </div>
     </div>
@@ -368,28 +396,29 @@
   <div class="rover-lane" aria-hidden="true">
     <span class="rover">
       <svg viewBox="0 0 140 72">
-        <defs>
-          <linearGradient id="roverGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#1b2438" />
-            <stop offset="1" stop-color="#080c14" />
-          </linearGradient>
-        </defs>
         <g class="rover-body">
-          <rect x="24" y="22" width="92" height="24" rx="11" fill="url(#roverGrad)" stroke="rgba(62,242,255,0.5)" />
-          <rect x="40" y="10" width="34" height="14" rx="7" fill="#0c1420" stroke="rgba(139,92,246,0.6)" />
-          <line x1="52" y1="10" x2="52" y2="2" stroke="#8b5cf6" stroke-width="1.6" />
-          <circle class="rover-beacon" cx="52" cy="2" r="3" fill="#ff4bb0" />
-          <circle class="rover-eye" cx="104" cy="34" r="4" fill="#3ef2ff" />
-          <rect x="30" y="44" width="80" height="3" rx="1.5" fill="rgba(62,242,255,0.18)" />
+          <rect x="34" y="18" width="72" height="36" rx="2.5" fill="#171d24" stroke="rgba(240,161,46,0.7)" />
+          <rect x="40" y="22" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="56" y="22" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="72" y="22" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="40" y="40" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="56" y="40" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="72" y="40" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <line x1="70" y1="18" x2="70" y2="6" stroke="#f0a12e" stroke-width="1.4" />
+          <circle class="rover-beacon" cx="70" cy="5" r="2.6" fill="#f0a12e" />
+          <rect class="rover-eye" x="88" y="31" width="12" height="8" rx="1" fill="#57b6d9" opacity="0.9" />
         </g>
-        <circle class="rover-wheel" cx="48" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
-        <circle class="rover-wheel" cx="94" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
+        <rect class="rover-wheel" x="30" y="14" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <rect class="rover-wheel" x="102" y="14" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <rect class="rover-wheel" x="30" y="42" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <rect class="rover-wheel" x="102" y="42" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <path class="rover-trace" d="M0 36 H28" stroke="rgba(87,182,217,0.5)" stroke-dasharray="4 5" />
       </svg>
     </span>
   </div>
 
   <!-- ================= EXPERIENCE ================= -->
-  <section class="section" id="experience" data-mark="FIELD">
+  <section class="section" id="experience" data-mark="03">
     <div class="wrap">
       <div class="sec-head">
         <p class="sec-label mono" data-reveal>03 / EXPERIENCE</p>
@@ -403,8 +432,9 @@
           <span class="tl-dot" aria-hidden="true"></span>
           <div class="tl-card">
             <div class="tl-meta">
-              <span class="tl-date mono">Sep 2026 — Present</span>
-              <span class="tl-place mono">Charlotte, NC</span>
+              <span class="tl-date mono">SEP 2026 — PRESENT</span>
+              <span class="tl-place mono">CHARLOTTE, NC</span>
+              <span class="tl-tag mono">CURRENT</span>
             </div>
             <h3>Robotics Software Engineer <span>· Gold Rush Robotics (VEX U)</span></h3>
             <ul class="tl-list">
@@ -419,8 +449,8 @@
           <span class="tl-dot" aria-hidden="true"></span>
           <div class="tl-card">
             <div class="tl-meta">
-              <span class="tl-date mono">Sep 2024 — Jun 2025</span>
-              <span class="tl-place mono">Remote</span>
+              <span class="tl-date mono">SEP 2024 — JUN 2025</span>
+              <span class="tl-place mono">REMOTE</span>
             </div>
             <h3>Software Engineer Intern <span>· Community Dreams Foundation</span></h3>
             <ul class="tl-list">
@@ -436,7 +466,7 @@
           <div class="tl-card">
             <div class="tl-meta">
               <span class="tl-date mono">2023 — 2024</span>
-              <span class="tl-place mono">Marlton, NJ</span>
+              <span class="tl-place mono">MARLTON, NJ</span>
             </div>
             <h3>Software Developer <span>· FRC Team 2722, Charge Robotics</span></h3>
             <ul class="tl-list">
@@ -451,7 +481,7 @@
   </section>
 
   <!-- ================= PROJECTS ================= -->
-  <section class="section" id="projects" data-mark="BUILD">
+  <section class="section" id="projects" data-mark="04">
     <div class="wrap">
       <div class="sec-head">
         <p class="sec-label mono" data-reveal>04 / PROJECTS</p>
@@ -475,6 +505,7 @@
           <ul class="pills tight">
             <li>WPILib</li><li>Java</li><li>Sensor Calibration</li><li>PID Control</li>
           </ul>
+          <div class="proj-foot mono"><span>STATUS / SHIPPED</span><span>SEASON 2024</span></div>
         </article>
 
         <article class="proj-card tilt" data-reveal style="--d:120ms">
@@ -493,13 +524,14 @@
           <ul class="pills tight">
             <li>Spring Boot</li><li>Java</li><li>MongoDB</li><li>REST</li>
           </ul>
+          <div class="proj-foot mono"><span>STATUS / INTERNSHIP</span><span>9 MONTHS</span></div>
         </article>
       </div>
     </div>
   </section>
 
   <!-- ================= EDUCATION ================= -->
-  <section class="section" id="education">
+  <section class="section" id="education" data-mark="05">
     <div class="wrap">
       <div class="sec-head">
         <p class="sec-label mono" data-reveal>05 / EDUCATION</p>
@@ -508,13 +540,13 @@
 
       <div class="edu-grid">
         <article class="edu-card" data-reveal>
-          <div class="edu-meta"><span class="mono">Expected May 2028</span><span class="mono">Charlotte, NC</span></div>
+          <div class="edu-meta"><span class="mono">EXPECTED MAY 2028</span><span class="mono">CHARLOTTE, NC</span></div>
           <h3>University of North Carolina at Charlotte</h3>
           <p class="edu-degree">B.S. Computer Science — Concentration in AI, Robotics &amp; Gaming</p>
           <div class="edu-tags"><span>Artificial Intelligence</span><span>Robotics</span><span>Game Systems</span></div>
         </article>
         <article class="edu-card" data-reveal style="--d:120ms">
-          <div class="edu-meta"><span class="mono">Aug 2024 — Jun 2026</span><span class="mono">Raleigh, NC</span></div>
+          <div class="edu-meta"><span class="mono">AUG 2024 — JUN 2026</span><span class="mono">RALEIGH, NC</span></div>
           <h3>Wake Technical Community College</h3>
           <p class="edu-degree">Associate in Science</p>
           <div class="edu-tags"><span>Transfer Pathway</span><span>Computer Science Core</span></div>
@@ -544,15 +576,22 @@
     <span class="rover reverse">
       <svg viewBox="0 0 140 72">
         <g class="rover-body">
-          <rect x="24" y="22" width="92" height="24" rx="11" fill="url(#roverGrad)" stroke="rgba(62,242,255,0.5)" />
-          <rect x="40" y="10" width="34" height="14" rx="7" fill="#0c1420" stroke="rgba(139,92,246,0.6)" />
-          <line x1="52" y1="10" x2="52" y2="2" stroke="#8b5cf6" stroke-width="1.6" />
-          <circle class="rover-beacon" cx="52" cy="2" r="3" fill="#ff4bb0" />
-          <circle class="rover-eye" cx="104" cy="34" r="4" fill="#b6ff5c" />
-          <rect x="30" y="44" width="80" height="3" rx="1.5" fill="rgba(62,242,255,0.18)" />
+          <rect x="34" y="18" width="72" height="36" rx="2.5" fill="#171d24" stroke="rgba(240,161,46,0.7)" />
+          <rect x="40" y="22" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="56" y="22" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="72" y="22" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="40" y="40" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="56" y="40" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <rect x="72" y="40" width="12" height="10" fill="#0b0e11" stroke="rgba(255,255,255,0.22)" />
+          <line x1="70" y1="18" x2="70" y2="6" stroke="#f0a12e" stroke-width="1.4" />
+          <circle class="rover-beacon" cx="70" cy="5" r="2.6" fill="#f0a12e" />
+          <rect class="rover-eye" x="88" y="31" width="12" height="8" rx="1" fill="#4fbf8b" opacity="0.9" />
         </g>
-        <circle class="rover-wheel" cx="48" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
-        <circle class="rover-wheel" cx="94" cy="56" r="10" fill="none" stroke="#3ef2ff" stroke-width="2" stroke-dasharray="3 4" />
+        <rect class="rover-wheel" x="30" y="14" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <rect class="rover-wheel" x="102" y="14" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <rect class="rover-wheel" x="30" y="42" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <rect class="rover-wheel" x="102" y="42" width="8" height="16" rx="1" fill="#0f1317" stroke="rgba(255,255,255,0.3)" />
+        <path class="rover-trace" d="M112 36 H140" stroke="rgba(240,161,46,0.45)" stroke-dasharray="4 5" />
       </svg>
     </span>
   </div>
@@ -560,15 +599,15 @@
   <!-- ================= CONTACT ================= -->
   <section class="section contact" id="contact">
     <svg class="circuit contact-circuit" aria-hidden="true" viewBox="0 0 900 620" preserveAspectRatio="xMidYMid slice">
-      <g stroke="rgba(139,92,246,0.4)" fill="none" stroke-width="1">
+      <g stroke="rgba(87,182,217,0.34)" fill="none" stroke-width="1">
         <path class="trace" d="M-20 120 H210 L254 76 H470 L514 120 H920" />
         <path class="trace" d="M-20 330 H140 L184 374 H420 L464 330 H700 " />
         <path class="trace" d="M-20 500 H260 L304 456 H540 L584 500 H920" />
       </g>
-      <g class="nodes" fill="#a78bfa">
-        <circle cx="254" cy="76" r="3" /><circle cx="514" cy="120" r="3" />
-        <circle cx="184" cy="374" r="3" /><circle cx="464" cy="330" r="3" />
-        <circle cx="304" cy="456" r="3" /><circle cx="584" cy="500" r="3" />
+      <g class="nodes" fill="#57b6d9">
+        <circle cx="254" cy="76" r="2.6" /><circle cx="514" cy="120" r="2.6" />
+        <circle cx="184" cy="374" r="2.6" /><circle cx="464" cy="330" r="2.6" />
+        <circle cx="304" cy="456" r="2.6" /><circle cx="584" cy="500" r="2.6" />
       </g>
     </svg>
     <div class="wrap">
@@ -604,13 +643,12 @@
         </a>
       </div>
     </div>
-    <div class="contact-orb" aria-hidden="true" data-parallax="-0.12"></div>
   </section>
 
   <footer class="footer">
     <div class="wrap footer-inner">
       <span class="mono">© 2026 SAI BHARGAV YELAMANCHI</span>
-      <span class="mono">CHARLOTTE · NC</span>
+      <span class="mono footer-status"><i class="led ok"></i>OPEN TO INTERNSHIPS</span>
       <a class="mono" href="#top">BACK TO TOP ↑</a>
     </div>
   </footer>
